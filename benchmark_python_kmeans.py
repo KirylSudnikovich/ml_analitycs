@@ -42,7 +42,7 @@ def testlm(data, labels, clusters):
         #Store results
         cur_record = {}
         cur_record['res_time']           = algo_timetaken
-        cur_record['accuracy']           = homogeneity_score(labels,modkm.labels_) 
+        cur_record['accuracy']           = homogeneity_score(labels,modkm.labels_)
         cur_record['cpu_util']           = (cpu_util_end -cpu_util_start) \
                                             if (cpu_util_end - cpu_util_start) > 0 else 0
         cur_record['mem_use']            = (mem_used_end - mem_used_start) \
@@ -89,8 +89,9 @@ def testlm(data, labels, clusters):
     return (result)
 
 #get measurement data using simulated datasets
-
-sim_data = pd.read_csv("./data_simulation/Cluster5_XYID.csv", sep = ",")
-cur_result    = testlm(sim_data.iloc[:,0:2], sim_data.iloc[:,2], clusters=5)
+cluster_number = 20
+sim_data = pd.read_csv("./data_simulation/Cluster_20cl_X4_5K_9K_140246_XID.csv", sep = ",")
+last_column = len(sim_data.columns) -1
+cur_result    = testlm(sim_data.iloc[:,0:last_column], sim_data.iloc[:,last_column], clusters=cluster_number)
 cur_resultDF  = pd.DataFrame(cur_result)
-cur_resultDF.to_csv("./testdat/measurementDataPyKMeans_Cluster5" + "_2hr.csv", sep = ",", header = True, index = False)
+cur_resultDF.to_csv("./testdat/measurementDataPyKMeans_Aggregation" + str(cluster_number) + "_72sec.csv", sep = ",", header = True, index = False)
