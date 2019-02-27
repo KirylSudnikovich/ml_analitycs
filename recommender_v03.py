@@ -6,6 +6,7 @@ import pandas as pd
 import os
 import pickle
 from sklearn.model_selection import train_test_split
+import operator
 # test results in a csv file should be all of the same ML algorithm
 directory = "./testdat/used/"
 data = {}
@@ -52,25 +53,43 @@ for alg, dat in data.items():
         print (alg + " ("+response+") "+" accuracy :" + str(modlm.score(predictorTest, responseTest)))
         models[alg][response] = modlm
 
-
+"""
 accuracy_weight = 10
 response_time_weight = 2
 CPU_utilization_weight = 4
 IO_operations_weight = 6
 Physical_reads_weight = 3
+"""
 
-n_observations = 1000000
-n_predictors = 1100
 
-def recommend():
+
+def recommend(weights,n_observations,n_predictors):
+    alg_scores = {}
     for alg, responses in models.items():
+        alg_scores[alg] = 0
         for response, model in responses.items():
-            pred = model.predict([[n_observations,n_predictors]])
-            #print (response+":"+str(pred))
-            if pred == 0:
-                res = float("infinity")
-            else:
-                res = 1/pred
-            print (response+":"+str(res))
-            #print(res)
-recommend()
+            if response in weights.keys():
+                pred = model.predict([[n_observations,n_predictors]])
+                #print (response+":"+str(pred))
+                if pred == 0:
+                    res = float("infinity")
+                else:
+                    if response == "avg_accuracy": # the larger the value, the better
+                        res = pred
+                    else:                          # the lesser the value, the better
+                        res =  1/pred
+                print (alg+":"+response+":"+str(res))
+                alg_scores[alg] += res*weights[response]
+    return sorted(alg_scores.items(), key=operator.itemgetter(1))
+                #print(res)
+
+weights_ = {
+    "avg_accuracy" : 10,
+    "avg_cpu_util" : 4,
+    "avg_res_time" : 2,
+    "avg_mem_use"  : 1,
+}
+n_obs = 1000000
+n_pred = 1100
+print ("====================")
+print (recommend(weights_,n_obs,n_pred))
