@@ -84,12 +84,16 @@ def recommend(weights,n_observations,n_predictors):
                 #print(res)
 
 weights_ = {
-    "avg_accuracy" : 10,
+    "avg_accuracy" : 100,
     "avg_cpu_util" : 4,
-    "avg_res_time" : 2,
+    "avg_res_time" : 20,
     "avg_mem_use"  : 1,
 }
 n_obs = 1000000
 n_pred = 1100
 print ("====================")
-print (recommend(weights_,n_obs,n_pred))
+rec = recommend(weights_,n_obs,n_pred)
+print (rec)
+from operator import itemgetter
+by_max_value = max(rec,key=itemgetter(1))
+print ("Recommended: "+ by_max_value[0])
